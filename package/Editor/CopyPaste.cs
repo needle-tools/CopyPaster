@@ -104,7 +104,8 @@ public class CopyPaste
 		{
 			if (obj is GameObject go)
 			{
-				Object.Instantiate(go);
+				var instance = Object.Instantiate(go);
+				Selection.activeObject = instance;
 				break;
 			}
 		}
