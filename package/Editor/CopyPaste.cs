@@ -12,6 +12,12 @@ using Object = UnityEngine.Object;
 
 public class CopyPaste
 {
+	private static bool DebugLog
+	{
+		get => SessionState.GetBool("CopyPasteDebugLog", false);
+		set => SessionState.SetBool("CopyPasteDebugLog", value);
+	} 
+
 	[InitializeOnLoadMethod]
 	private static void Init()
 	{
@@ -69,7 +75,7 @@ public class CopyPaste
 
 		CollectRecursive(obj);
 		
-		Debug.Log("COPY " + obj, obj);
+		if(DebugLog) Debug.Log("COPY " + obj, obj);
 		var path = Application.dataPath + "/../Temp/CopyBuffer.asset";
 		InternalEditorUtility.SaveToSerializedFileAndForget(hierarchy.ToArray(), path, true);
 		EditorGUIUtility.systemCopyBuffer = path;
@@ -97,7 +103,7 @@ public class CopyPaste
 		// }
 #endif
 		
-		Debug.Log("PASTE " + CurrentCopyBuffer);
+		if(DebugLog) Debug.Log("PASTE " + CurrentCopyBuffer);
 		var objs = InternalEditorUtility.LoadSerializedFileAndForget(CurrentCopyBuffer);
 		CurrentCopyBuffer = null;
 		foreach (var obj in objs)
@@ -105,6 +111,7 @@ public class CopyPaste
 			if (obj is GameObject go)
 			{
 				var instance = Object.Instantiate(go);
+				instance.name = go.name;
 				Selection.activeObject = instance;
 				break;
 			}
